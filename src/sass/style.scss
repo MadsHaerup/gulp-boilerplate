@@ -1,0 +1,16 @@
+body{
+    background-color: white;
+    margin:0;
+    h1{
+        font-size: 3em;
+        text-align: center;
+        color: coral;
+        text-transform: uppercase;
+        animation: smooth 2s ease-in forwards infinite;
+    }
+}
+
+@keyframes smooth {
+    0% { opacity: 1;}
+    100% { opacity: 0;}
+    }

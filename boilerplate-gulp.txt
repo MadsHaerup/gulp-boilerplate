@@ -1,0 +1,46 @@
+var gulp = require("gulp"); //henter biblioteket 
+var htmlmin = require('gulp-htmlmin');
+var sass = require('gulp-sass');
+var cleanCss = require('gulp-clean-css');
+var sourcemaps = require('gulp-sourcemaps');
+var connect = require('gulp-connect');
+
+//flyter filer fra src til dist mappen
+function moveHTML() {
+    return gulp.src("./src/html/**/*.html")
+        .pipe(sourcemaps.init())
+        .pipe(htmlmin({ collapseWhitespace: true }))
+        .pipe(sourcemaps.write("."))
+        .pipe(gulp.dest("./dist"))  //dest = destination, hvor skal filen spyttes hen index html skal ligge i roden
+        .pipe(connect.reload());
+}
+
+function processSass() {
+    return gulp.src("./src/sass/**/*.scss")
+        .pipe(sourcemaps.init()) //initialisere sourcemaps
+        .pipe(sass())//kører sass
+        .pipe(cleanCss({ compatibility: "ie9" })) //minify css
+        .pipe(sourcemaps.write("."))//. = samme mappe som dest
+        .pipe(gulp.dest("./dist/assets/css"))  //gulp lave assets og css mappe
+        .pipe(connect.reload());
+}
+
+function watchEverything() {
+   gulp.watch("./src/html/**/*.html", { //Kigger om der ændringer i filen
+        ignoreInitial: false //udføre en task før der er sket en ændring
+    },
+       moveHTML); //referer til den som et callback
+    
+    gulp.watch("./src/sass/**/*.scss", {
+        ignoreInitial: false
+    }, processSass);
+}
+
+function server() {
+    return connect.server({
+        root: 'dist',
+        livereload: true,
+        port: 80
+      });
+}
+gulp.task("default", gulp.parallel(server, watchEverything)); //køre funktionen hver gang der er en ændring
