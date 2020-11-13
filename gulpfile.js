@@ -1,10 +1,9 @@
-var {watch, task, parallel} = require("gulp"); //kan fjerne gulp. foran watch/task/parallel
+var {watch, task, parallel, series} = require("gulp"); //kan fjerne gulp. foran watch/task/parallel
 var {server} = require('gulp-connect'); //henter biblioteket 
 
 //importere funktionerne
 var moveHTML = require("./move-html"); 
 var processSass = require("./process-sass");
-var processJs = require("./process-js");
 
 
 function watchEverything() {
@@ -16,10 +15,6 @@ function watchEverything() {
     watch("./src/sass/**/*.scss", {
         ignoreInitial: false
     }, processSass);
-
-    watch("./src/js/**/*.js", {
-        ignoreInitial: false
-    }, processJs);
 }
 
 function serve() {
@@ -30,3 +25,4 @@ function serve() {
       });
 }
 task("default", parallel(serve, watchEverything)); //køre funktionen hver gang der er en ændring
+task("build", series(moveHTML, processSass));
